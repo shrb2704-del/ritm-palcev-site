@@ -244,6 +244,16 @@ details p{margin:6px 0 10px;line-height:1.45}
 .wave svg{width:100%;height:100%;overflow:visible;animation:updown calc(var(--beat)*2) ease-in-out infinite}
 .wave path{fill:none;stroke:#F9A8FF;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px #F9A8FF)}
 @keyframes updown{0%,100%{transform:translateY(-18%)}50%{transform:translateY(18%)}}
+/* a movement drawn as two pictures: the second lies on top and shows on every other step,
+   so the hands really move. num = the digit said on that step ("six", "seven"). */
+#body2{opacity:0}
+.actor:not(.two) #body2{display:none}
+.actor.two.b #body{opacity:0}
+.actor.two.b #body2{opacity:1}
+.num svg{width:100%;height:100%;overflow:visible;opacity:0}
+.num text{font-family:var(--display);font-weight:800;font-size:92px;fill:var(--cc,#5EE7FF);filter:drop-shadow(0 0 10px var(--cc,#5EE7FF))}
+.actor:not(.b) .num.f0 svg,.actor.b .num.f1 svg{opacity:1;animation:numpop var(--beat) ease-out}
+@keyframes numpop{0%{transform:scale(.5)}35%{transform:scale(1.18)}100%{transform:none}}
 .actor.enter{animation:enter .45s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 .play.paused .swirl svg,.play.paused .pulse i,.play.paused .wave svg{animation-play-state:paused}
@@ -336,7 +346,7 @@ details p{margin:6px 0 10px;line-height:1.45}
   .hud .btn,.hud .round{min-height:40px;height:40px}
 }
 @media (prefers-reduced-motion: reduce){
-  .digit.pop,.ring.go,.strip .in.slide,.hand.in.wave,.finish img,.actor img.bob{animation:none}
+  .digit.pop,.ring.go,.strip .in.slide,.hand.in.wave,.finish img,.actor img.bob,.actor .num svg{animation:none}
   .hand{transition:opacity .2s}
   .actor{transition:none}
 }
@@ -416,7 +426,7 @@ details p{margin:6px 0 10px;line-height:1.45}
   <ul class="steps">
     <li><b>Цифры и пальцы.</b> На экране цифра от 1 до 5, дети показывают столько же пальцев.</li>
     <li id="howSigns" hidden><b>Жесты.</b> Рука на экране показывает жест, дети повторяют его.</li>
-    <li><b>Разные действия.</b> Дети повторяют за персонажем, как в зеркале, а руки делают разное. Движений четыре: кулак и ладонь, голова и живот, нос и ухо, круг и взмахи. Круговая стрелка значит «веди по кругу», расходящиеся кольца значат «хлопай», ровное кольцо значит «держи руку здесь», стрелка вверх-вниз значит «маши». Когда персонаж поворачивается, руки меняются.</li>
+    <li><b>Разные действия.</b> Дети повторяют за персонажем, как в зеркале, а руки делают разное. Движений пять: кулак и ладонь, голова и живот, «шесть-семь», нос и ухо, круг и взмахи. В «шесть-семь» ладони смотрят вверх и по очереди идут вверх и вниз, как чаши весов. Круговая стрелка значит «веди по кругу», расходящиеся кольца значат «хлопай», ровное кольцо значит «держи руку здесь», стрелка вверх-вниз значит «маши». Когда персонаж поворачивается, руки меняются.</li>
     <li><b>Смешанная разминка.</b> Упражнения идут по очереди.</li>
     <li><b>Уровень и скорость.</b> Уровень задаёт, что показывать, а скорость задаёт, как часто это меняется. Любой уровень можно запустить на любой из четырёх скоростей.</li>
   </ul>
@@ -514,6 +524,7 @@ details p{margin:6px 0 10px;line-height:1.45}
   <div class="stage idle" id="stage" aria-hidden="true" hidden>
     <div class="actor" id="actor">
       <img id="body" src="img/pose-head-belly.webp" alt="">
+      <img id="body2" alt="">
       <div id="cues"></div>
     </div>
   </div>
@@ -553,13 +564,14 @@ details p{margin:6px 0 10px;line-height:1.45}
   // max: largest digit · repeat: the same thing may come twice · hint: the hand shows the answer
   // signs: how many gestures are in play · turns: how the character changes hands
   const LEVELS = {
-    easy:   { max: 3, repeat: false, hint: true,  signs: 3, turns: 'rare',   moves: 2 },
-    medium: { max: 5, repeat: false, hint: true,  signs: 5, turns: 'steady', moves: 3 },
-    hard:   { max: 5, repeat: true,  hint: false, signs: 6, turns: 'random', moves: 4 }
+    easy:   { max: 3, repeat: false, hint: true,  signs: 3, turns: 'rare',   moves: 3 },
+    medium: { max: 5, repeat: false, hint: true,  signs: 5, turns: 'steady', moves: 4 },
+    hard:   { max: 5, repeat: true,  hint: false, signs: 6, turns: 'random', moves: 5 }
   };
   // Movements for "Разные действия", easiest first. A level uses the first few of them.
-  // cues: [kind, x%, y%, width%, colour] placed on the pose picture.
+  // cues: [kind, x%, y%, width%, colour, text, frame] placed on the pose picture.
   // swirl = stroke in a circle · pat = tap in time · pulse = hold the hand here · wave = move it up and down
+  // num = a digit shown on one of the two frames of a movement that has a second picture (alt)
   const MOVES = [
     // one hand is a fist, the other an open palm; on the turn they swap
     { id: 'fist-palm', name: 'Кулак и ладонь', src: 'img/pose-fist-palm.webp', ratio: '575/1100',
@@ -567,6 +579,9 @@ details p{margin:6px 0 10px;line-height:1.45}
     // one hand strokes the head in a circle, the other pats the belly
     { id: 'head-belly', name: 'Голова и живот', src: 'img/pose-head-belly.webp', ratio: '589/1100',
       cues: [['swirl', 65, 5, 36], ['pat', 42, 58.6, 34]] },
+    // "six seven": palms up like scales, one hand goes up while the other goes down, trading on every step
+    { id: 'six-seven', name: 'Шесть-семь', src: 'img/pose-67-a.webp', alt: 'img/pose-67-b.webp', ratio: '933/1100',
+      cues: [['num', 9, 6, 20, '#5EE7FF', '6', 0], ['num', 91, 6, 20, '#F9A8FF', '7', 1]] },
     // one hand holds the nose, the other the ear; on the turn they swap
     { id: 'nose-ear', name: 'Нос и ухо', src: 'img/pose-nose-ear.webp', ratio: '600/1100',
       cues: [['pulse', 41, 23, 24], ['pulse', 72.5, 24, 24, '#F9A8FF']] },
@@ -618,9 +633,9 @@ details p{margin:6px 0 10px;line-height:1.45}
     actions: {
       title: 'Разные действия', hint: false,
       sub: 'Руки делают разное, дети повторяют за персонажем, как в зеркале. Когда он поворачивается, руки меняются.',
-      levels: { easy: 'Два простых движения, руки меняются вдвое реже',
-                medium: 'Три движения, ровная смена рук',
-                hard: 'Четыре движения, руки меняются неожиданно' }
+      levels: { easy: 'Три простых движения, руки меняются вдвое реже',
+                medium: 'Четыре движения, ровная смена рук',
+                hard: 'Пять движений, руки меняются неожиданно' }
     },
     mix: {
       title: 'Смешанная разминка', hint: true,
@@ -726,8 +741,12 @@ details p{margin:6px 0 10px;line-height:1.45}
       if (!fresh) turned = !turned;
       nextTurn += turnGap();
     }
+    // A two-picture movement never turns: its pictures trade places instead, every beat
+    // (every second beat on the slow speed).
+    const two = !!MOVES[moveIdx].alt;
+    const frame = two ? Math.floor((aBeat % moveSeg) / (hold >= 4 ? 2 : 1)) % 2 : 0;
     aBeat++;
-    return { kind, turned, move: moveIdx };
+    return { kind, turned: two ? false : turned, move: moveIdx, frame };
   }
   const CUE_INNER = {
     swirl: '<svg viewBox="0 0 100 100"><path d="M50 8A42 42 0 1 1 13.6 29"/><path d="M4 14L13.6 29 30 24"/></svg>',
@@ -739,9 +758,13 @@ details p{margin:6px 0 10px;line-height:1.45}
     const m = MOVES[i];
     shownMove = i;
     $('body').src = m.src;
+    $('body2').src = m.alt || m.src;
+    $('actor').classList.toggle('two', !!m.alt);
+    $('actor').classList.remove('b');
     $('actor').style.aspectRatio = m.ratio;
-    $('cues').innerHTML = m.cues.map(([type, x, y, w, colour]) =>
-      `<div class="cue ${type}" style="left:${x}%;top:${y}%;width:${w}%${colour ? `;--cc:${colour}` : ''}">${CUE_INNER[type]}</div>`).join('');
+    $('cues').innerHTML = m.cues.map(([type, x, y, w, colour, label, frame]) =>
+      `<div class="cue ${type}${type === 'num' ? ' f' + frame : ''}" style="left:${x}%;top:${y}%;width:${w}%${colour ? `;--cc:${colour}` : ''}">${
+        type === 'num' ? `<svg viewBox="0 0 100 100"><text x="50" y="52" text-anchor="middle" dominant-baseline="central">${label}</text></svg>` : CUE_INNER[type]}</div>`).join('');
     restart($('actor'), 'enter');
   }
   function setView(kind) {
@@ -900,11 +923,12 @@ details p{margin:6px 0 10px;line-height:1.45}
       restart($('hintBox'), 'beat');
       if (ev && ev.sign != null) { setHand(SIGNS[ev.sign].src, false); renderStrip(ev.upcoming.map(signChip), true); }
     } else {
-      restart($('body'), 'bob');
+      restart($('body'), 'bob'); restart($('body2'), 'bob');
       if (ev) {
         if (ev.move !== shownMove) setMove(ev.move);
         $('stage').classList.remove('idle');
         $('actor').classList.toggle('flip', ev.turned);
+        $('actor').classList.toggle('b', !!ev.frame);
         document.querySelectorAll('#cues .pat').forEach((el) => restart(el, 'go'));
       }
     }
