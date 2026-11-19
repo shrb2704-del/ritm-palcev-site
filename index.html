@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>Ритм пальцев</title>
+<meta name="theme-color" content="#070A22">
+<title>Ритм пальцев · Империя Знаний</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
@@ -66,12 +69,12 @@ button{font:inherit;color:inherit;cursor:pointer}
   padding-right:max(clamp(16px,4vw,64px),env(safe-area-inset-right,0px));
 }
 .top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:20px}
-.brand i{
-  width:40px;height:40px;border-radius:12px;background:var(--grad);display:grid;place-items:center;
-  box-shadow:0 8px 22px rgba(91,92,246,.5);
-}
-.brand svg{width:22px;height:22px;stroke:#fff;stroke-width:2.6;stroke-linecap:round;fill:none}
+/* The school's own mark, in its own blue, with the school name first and the trainer's name under it. */
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{height:clamp(46px,6.4vh,64px);width:auto;flex:none;filter:drop-shadow(0 4px 14px rgba(7,10,34,.7))}
+.brand span{display:grid;gap:2px;min-width:0;text-shadow:0 1px 10px rgba(7,10,34,.8)}
+.brand b{font-family:var(--display);font-weight:700;font-size:clamp(19px,2.4vh,24px);line-height:1.1;white-space:nowrap}
+.brand small{font-size:13px;font-weight:500;line-height:1.2;color:var(--muted);white-space:nowrap}
 .top nav{display:flex;gap:6px;margin-left:auto}
 .link{background:none;border:0;padding:10px 14px;border-radius:999px;color:var(--fg);font-weight:500;text-shadow:0 1px 8px rgba(7,10,34,.8)}
 .link:hover{background:rgba(7,10,34,.45)}
@@ -157,6 +160,11 @@ details p{margin:6px 0 10px;line-height:1.45}
 .orb.a{width:46vw;height:46vw;background:#7C3AED;left:-14vw;top:-18vw}
 .orb.b{width:42vw;height:42vw;background:#0EA5E9;right:-14vw;bottom:-20vw}
 
+/* school mark in the corner of the lesson screen: present, but quiet next to the task */
+.play .mark{
+  position:absolute;z-index:2;top:clamp(12px,2.6vh,28px);left:max(clamp(14px,2.2vw,40px),env(safe-area-inset-left,0px));
+  height:clamp(40px,8vh,84px);width:auto;opacity:.8;pointer-events:none;
+}
 .strip{position:absolute;top:clamp(14px,3vh,30px);left:0;right:0;display:flex;justify-content:center;pointer-events:none}
 .strip .in{display:flex;gap:12px;align-items:center}
 .strip .in.slide{animation:slide .35s cubic-bezier(.2,.8,.2,1)}
@@ -275,7 +283,10 @@ details p{margin:6px 0 10px;line-height:1.45}
   .home-scroll{grid-template-rows:auto auto auto}
   .hero{padding-top:min(30vh,240px)}
   .top{flex-wrap:nowrap;gap:12px}
-  .brand{font-size:18px;gap:10px;min-width:0}
+  .brand{gap:10px}
+  .brand img{height:42px}
+  .brand b{font-size:17px}
+  .brand small{font-size:12px}
   .top nav{display:none}
   .top .btn{margin-left:auto;padding:0 16px}
   .panel{border-radius:26px}
@@ -301,6 +312,7 @@ details p{margin:6px 0 10px;line-height:1.45}
 }
 /* phone held upright: digit above, hand below, both as large as the screen allows */
 @media (max-width:860px) and (orientation:portrait){
+  .play .mark{display:none}   /* the row of coming digits takes the whole width here */
   .arena{flex-direction:column;gap:10px}
   .digit-card{width:min(38vh,72vw);height:min(38vh,72vw)}
   .digit{font-size:min(28vh,54vw)}
@@ -341,7 +353,7 @@ details p{margin:6px 0 10px;line-height:1.45}
 
   <div class="home-scroll">
     <header class="top">
-      <div class="brand"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18v-5M12 18V6M18 18v-8"/></svg></i>Ритм пальцев</div>
+      <div class="brand"><img src="img/logo.webp" width="228" height="256" alt=""><span><b>Империя Знаний</b><small>Ритм пальцев</small></span></div>
       <nav>
         <button class="link" type="button" data-how>Как это работает</button>
         <button class="link" type="button" data-cards>Упражнения</button>
@@ -488,6 +500,7 @@ details p{margin:6px 0 10px;line-height:1.45}
   <div class="orb a" aria-hidden="true"></div>
   <div class="orb b" aria-hidden="true"></div>
 
+  <img class="mark" src="img/logo.webp" width="228" height="256" alt="">
   <div class="strip" id="stripWrap" aria-hidden="true"><div class="in" id="strip"></div></div>
 
   <div class="arena" id="arena">
