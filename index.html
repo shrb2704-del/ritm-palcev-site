@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Ритм пальцев</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Look taken from the owner's reference: deep navy scene, 3D glass character, frosted panels,
+   violet-to-blue buttons, cyan highlights. One dark look only.
+   Layout: home = art on the right, glass panel on the left, exercise cards along the bottom.
+   Play = one giant digit and one hand, nothing else competing for the children's eyes. */
+:root{
+  --bg:#070A22; --fg:#F2F5FF; --muted:#AEB7DA;
+  --glass:rgba(255,255,255,.08); --glass-strong:rgba(14,18,48,.72); --edge:rgba(255,255,255,.18);
+  --violet:#8B5CF6; --blue:#3B82F6; --cyan:#5EE7FF;
+  --grad:linear-gradient(135deg,#8B5CF6 0%,#3B82F6 100%);
+  --display:"Montserrat","Segoe UI",system-ui,sans-serif;
+  --text:"Inter","Segoe UI",system-ui,sans-serif;
+  --beat:.6s; --c1:#5EE7FF; --c2:#3B82F6;
+  color-scheme:dark;
+}
+html,body{height:100%;margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--text);font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+
+.glass{
+  background:var(--glass);border:1px solid var(--edge);
+  backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:0 24px 60px rgba(2,4,20,.45), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 26px;border-radius:999px;border:1px solid var(--edge);
+  background:var(--glass);font-weight:600;font-size:16px;white-space:nowrap;
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.btn:hover{border-color:rgba(255,255,255,.4)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--grad);border-color:transparent;box-shadow:0 12px 32px rgba(91,92,246,.5)}
+.btn.sm{min-height:44px;padding:0 20px;font-size:15px}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.view{position:absolute;inset:0}
+
+/* ---------- home ---------- */
+.home-bg{position:absolute;inset:0;overflow:hidden}
+.hero-art{position:absolute;top:0;right:-30%;width:130%;height:100%;object-fit:cover;object-position:center 40%}
+.hero-shade{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg, rgba(7,10,34,.9) 0%, rgba(7,10,34,.55) 38%, rgba(7,10,34,0) 62%),
+    linear-gradient(0deg, rgba(7,10,34,.92) 0%, rgba(7,10,34,0) 34%),
+    linear-gradient(180deg, rgba(7,10,34,.78) 0%, rgba(7,10,34,0) 20%);
+}
+.home-scroll{
+  position:absolute;inset:0;overflow-y:auto;box-sizing:border-box;
+  display:grid;grid-template-rows:auto 1fr auto;gap:clamp(12px,2.4vh,28px);
+  padding-block:clamp(14px,2.6vh,28px);
+  padding-left:max(clamp(16px,4vw,64px),env(safe-area-inset-left,0px));
+  padding-right:max(clamp(16px,4vw,64px),env(safe-area-inset-right,0px));
+}
+.top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:20px}
+.brand i{
+  width:40px;height:40px;border-radius:12px;background:var(--grad);display:grid;place-items:center;
+  box-shadow:0 8px 22px rgba(91,92,246,.5);
+}
+.brand svg{width:22px;height:22px;stroke:#fff;stroke-width:2.6;stroke-linecap:round;fill:none}
+.top nav{display:flex;gap:6px;margin-left:auto}
+.link{background:none;border:0;padding:10px 14px;border-radius:999px;color:var(--fg);font-weight:500;text-shadow:0 1px 8px rgba(7,10,34,.8)}
+.link:hover{background:rgba(7,10,34,.45)}
+
+.hero{display:flex;align-items:center;min-width:0}
+.panel{width:min(600px,100%);box-sizing:border-box;border-radius:32px;padding:clamp(20px,3.2vh,40px) clamp(20px,2.6vw,40px)}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+  border:1px solid var(--edge);background:rgba(139,92,246,.22);font-size:14px;font-weight:500;
+}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+h1{
+  font-family:var(--display);font-weight:800;line-height:1.04;letter-spacing:-.01em;
+  font-size:clamp(38px,min(5vw,8.4vh),80px);margin:clamp(12px,2vh,22px) 0 clamp(10px,1.6vh,18px);
+}
+h1 em{font-style:normal;background:linear-gradient(90deg,#5EE7FF,#60A5FA);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:0;color:var(--muted);font-size:clamp(15px,1.25vw,18px);line-height:1.5;max-width:44ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(14px,2.6vh,28px)}
+.facts{list-style:none;margin:clamp(14px,2.6vh,28px) 0 0;padding:clamp(12px,2vh,20px) 0 0;border-top:1px solid var(--edge);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.facts li{display:flex;gap:10px;align-items:center;min-width:0}
+.facts i{flex:none;width:38px;height:38px;border-radius:12px;border:1px solid var(--edge);background:var(--glass);display:grid;place-items:center}
+.facts svg{width:19px;height:19px;fill:none;stroke:var(--cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.facts b{display:block;font-size:14px;font-weight:600}
+.facts span{display:block;font-size:12.5px;color:var(--muted);line-height:1.3}
+
+.cards{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;border-radius:26px;padding:8px}
+.card{
+  display:flex;align-items:center;gap:14px;text-align:left;min-width:0;
+  background:none;border:0;border-radius:20px;padding:12px 16px;
+}
+.card + .card{border-left:1px solid var(--edge);border-radius:0 20px 20px 0}
+button.card:hover{background:rgba(255,255,255,.07)}
+.card .tile{flex:none;width:56px;height:56px;border-radius:16px;border:1px solid var(--edge);background:rgba(139,92,246,.2);display:grid;place-items:center;overflow:hidden}
+.card .tile img{width:44px;height:52px;object-fit:contain}
+.card .tile svg{width:26px;height:26px;fill:none;stroke:var(--cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card .txt{min-width:0;flex:1}
+.card b{display:block;font-family:var(--display);font-weight:700;font-size:17px}
+.card span{display:block;color:var(--muted);font-size:13.5px;line-height:1.35}
+.card[aria-disabled="true"]{opacity:.62}
+
+/* ---------- dialogs ---------- */
+dialog{
+  border:1px solid var(--edge);border-radius:28px;padding:clamp(20px,3vw,32px);color:var(--fg);
+  background:var(--glass-strong);width:min(680px,calc(100% - 32px));box-sizing:border-box;max-height:calc(100% - 32px);
+  backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+}
+dialog::backdrop{background:rgba(4,6,20,.62);backdrop-filter:blur(3px)}
+dialog h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,2.6vw,32px);margin:0 0 6px}
+dialog .sub{margin:0 0 20px;color:var(--muted)}
+dialog a{color:var(--cyan)}
+.field{margin:0 0 18px;padding:0;border:0;min-width:0}
+.field legend,.field .lab{padding:0;margin-bottom:8px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.opt{position:relative;display:block}
+.opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.opt .box{display:block;height:100%;box-sizing:border-box;border:1px solid var(--edge);border-radius:18px;padding:14px;background:var(--glass)}
+.opt b{display:block;font-family:var(--display);font-size:17px;margin-bottom:4px}
+.opt small{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.opt input:checked + .box{background:linear-gradient(135deg,rgba(139,92,246,.55),rgba(59,130,246,.45));border-color:rgba(255,255,255,.5)}
+.opt input:checked + .box small{color:#E6EAFF}
+.opt input:focus-visible + .box{outline:2px solid var(--cyan);outline-offset:3px}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.seg{display:flex;gap:6px}
+.seg .opt{flex:1}
+.seg .box{padding:11px 8px;text-align:center;border-radius:14px;font-weight:600;font-size:14.5px}
+.speeds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.speeds .box{padding:12px 6px;text-align:center;border-radius:14px;font-weight:600;font-size:14.5px}
+.note{margin:8px 0 0;color:var(--muted);font-size:14px}
+.shift{display:flex;align-items:center;gap:8px}
+.shift output{min-width:74px;text-align:center;font-variant-numeric:tabular-nums}
+.round{width:44px;height:44px;border-radius:50%;border:1px solid var(--edge);background:var(--glass);font-size:20px;line-height:1}
+details{margin:0 0 20px;color:var(--muted);font-size:14px}
+details summary{cursor:pointer;padding:6px 0}
+details p{margin:6px 0 10px;line-height:1.45}
+.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.steps{margin:0 0 18px;padding-left:22px;line-height:1.6}
+.steps li{margin-bottom:6px}
+
+/* ---------- play ---------- */
+.play{overflow:hidden;background:radial-gradient(120% 90% at 50% 110%, #131A52 0%, var(--bg) 60%)}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none}
+.orb.a{width:46vw;height:46vw;background:#7C3AED;left:-14vw;top:-18vw}
+.orb.b{width:42vw;height:42vw;background:#0EA5E9;right:-14vw;bottom:-20vw}
+
+.strip{position:absolute;top:clamp(14px,3vh,30px);left:0;right:0;display:flex;justify-content:center;pointer-events:none}
+.strip .in{display:flex;gap:12px;align-items:center}
+.strip .in.slide{animation:slide .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes slide{from{transform:translateX(44px);opacity:.4}to{transform:none;opacity:1}}
+.strip b{
+  width:clamp(44px,5vw,68px);height:clamp(44px,5vw,68px);border-radius:18px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:clamp(22px,2.6vw,36px);
+  background:var(--glass);border:1px solid var(--edge);
+}
+.strip b img{width:78%;height:78%;object-fit:contain}
+.strip b:nth-child(2){opacity:.8}.strip b:nth-child(3){opacity:.6}.strip b:nth-child(4){opacity:.42}.strip b:nth-child(5){opacity:.26}
+
+.arena{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  gap:clamp(20px,6vw,120px);padding:clamp(70px,13vh,130px) 16px clamp(56px,9vh,96px);box-sizing:border-box;
+}
+.digit-card{
+  position:relative;flex:none;width:min(60vh,40vw);height:min(60vh,40vw);border-radius:18%;
+  display:grid;place-items:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  box-shadow:0 30px 80px rgba(2,4,20,.5), inset 0 1px 0 rgba(255,255,255,.3), 0 0 90px color-mix(in srgb, var(--c2) 35%, transparent);
+  transition:box-shadow .4s ease;
+}
+.ring{position:absolute;inset:-8px;border-radius:inherit;border:4px solid var(--c1);opacity:0;pointer-events:none}
+.ring.go{animation:ring var(--beat) ease-out}
+@keyframes ring{from{opacity:.75;transform:scale(.97)}to{opacity:0;transform:scale(1.1)}}
+.digit{
+  font-family:var(--display);font-weight:800;line-height:1;font-size:min(44vh,29vw);
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#FFFFFF 18%,var(--c1) 62%,var(--c2) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 10px 30px color-mix(in srgb, var(--c1) 45%, transparent));
+}
+.digit.pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{0%{opacity:0;transform:scale(.45) rotate(-12deg)}55%{opacity:1;transform:scale(1.14) rotate(4deg)}100%{transform:none}}
+
+.hint{position:relative;flex:none;height:min(68vh,46vw);aspect-ratio:640/900}
+.hand{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;
+  transform:scale(.8) rotate(-8deg);transform-origin:50% 90%;
+  transition:opacity .2s ease, transform .4s cubic-bezier(.2,1.5,.4,1);
+  filter:drop-shadow(0 0 44px rgba(94,231,255,.35));
+}
+.hand.in{opacity:1;transform:none}
+.hand.out{opacity:0;transform:scale(.86) rotate(8deg)}
+.hand.in.wave{animation:wave 1.1s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+.arena.nohint .hint{display:none}
+.arena.nohint .digit-card{width:min(70vh,60vw);height:min(70vh,60vw)}
+.arena.nohint .digit{font-size:min(52vh,44vw)}
+/* gestures: the hand itself is the task, so it takes the whole arena */
+.arena.signs .digit-card{display:none}
+.arena.signs .hint{display:block;height:min(72vh,120vw)}
+.hint.beat{animation:nod var(--beat) ease-out}
+@keyframes nod{0%{transform:scale(1)}25%{transform:scale(1.035)}100%{transform:none}}
+
+/* actions: the character holds the pose, the cues show what each hand does.
+   Cue positions are measured on the pose image; flipping the actor swaps the hands. */
+.stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:clamp(64px,12vh,120px) 16px clamp(60px,10vh,104px);box-sizing:border-box}
+.actor{position:relative;height:100%;aspect-ratio:589/1100;max-width:100%;transition:transform .45s cubic-bezier(.3,.8,.3,1)}
+.actor.flip{transform:scaleX(-1)}
+.actor img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 50px rgba(94,231,255,.3))}
+.actor img.bob{animation:bob var(--beat) ease-out}
+@keyframes bob{0%{transform:translateY(0)}30%{transform:translateY(-1.2%)}100%{transform:none}}
+.cue{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;transition:opacity .3s}
+#cues{display:contents}
+.swirl svg{width:100%;height:100%;overflow:visible;animation:spin calc(var(--beat)*2) linear infinite}
+.swirl path{fill:none;stroke:#5EE7FF;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px #5EE7FF)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pat i{position:absolute;inset:0;border-radius:50%;border:8px solid #F9A8FF;opacity:0;box-shadow:0 0 22px rgba(249,168,255,.9), inset 0 0 22px rgba(249,168,255,.5)}
+.pat.go i{animation:patring var(--beat) ease-out}
+.pat.go i + i{animation-delay:calc(var(--beat)*.18)}
+@keyframes patring{0%{opacity:1;transform:scale(.3)}55%{opacity:.8}100%{opacity:0;transform:scale(1.25)}}
+/* pulse: hold the hand here · wave: move the hand up and down */
+.pulse i{position:absolute;inset:0;border-radius:50%;border:6px solid var(--cc,#5EE7FF);box-shadow:0 0 18px var(--cc,#5EE7FF);animation:breath calc(var(--beat)*2) ease-in-out infinite}
+@keyframes breath{0%,100%{transform:scale(.8);opacity:.95}50%{transform:scale(1.08);opacity:.45}}
+.wave svg{width:100%;height:100%;overflow:visible;animation:updown calc(var(--beat)*2) ease-in-out infinite}
+.wave path{fill:none;stroke:#F9A8FF;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px #F9A8FF)}
+@keyframes updown{0%,100%{transform:translateY(-18%)}50%{transform:translateY(18%)}}
+.actor.enter{animation:enter .45s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes enter{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.play.paused .swirl svg,.play.paused .pulse i,.play.paused .wave svg{animation-play-state:paused}
+.stage.idle .cue{opacity:0}
+.moves{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.moves .box{padding:12px 6px;text-align:center;border-radius:14px;font-weight:600;font-size:14.5px}
+
+.dots{position:absolute;left:0;right:0;bottom:clamp(26px,5vh,48px);display:flex;justify-content:center;gap:14px}
+.dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--edge);background:var(--glass)}
+.dots i.on{background:#fff;border-color:#fff;box-shadow:0 0 16px var(--cyan)}
+.progress{position:absolute;left:0;right:0;bottom:0;height:8px;background:rgba(255,255,255,.08)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8B5CF6,#5EE7FF);transition:width .4s linear}
+
+.hud{
+  position:absolute;z-index:3;bottom:max(22px,env(safe-area-inset-bottom,0px));right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+  border-radius:999px;padding:8px;transition:opacity .25s;max-width:calc(100% - 32px);box-sizing:border-box;
+}
+.hud.faded{opacity:0;pointer-events:none}
+.hud .btn{min-height:44px;padding:0 16px;font-size:14.5px}
+.hud output{min-width:42px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.hud .lab{font-size:13px;color:var(--muted);padding-left:6px}
+
+.finish{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:rgba(4,6,20,.55);padding:16px;box-sizing:border-box}
+.finish .box{border-radius:32px;padding:clamp(24px,4vw,44px);text-align:center;width:min(520px,100%);box-sizing:border-box}
+.finish img{height:min(26vh,200px);width:auto;animation:wave 1.1s ease-in-out infinite;transform-origin:50% 90%;filter:drop-shadow(0 0 40px rgba(94,231,255,.4))}
+.finish h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,56px);margin:8px 0 6px}
+.finish p{margin:0 0 22px;color:var(--muted)}
+.finish .actions{justify-content:center}
+
+/* ----- phones and narrow windows ----- */
+@media (max-width:860px){
+  body{overflow:auto}
+  /* home: the art becomes a header picture and the panel slides over its lower part */
+  .hero-art{right:-10%;width:120%;height:46%;object-position:center 30%}
+  .hero-shade{background:linear-gradient(0deg, rgba(7,10,34,1) 54%, rgba(7,10,34,0) 80%, rgba(7,10,34,.6) 100%)}
+  .home-scroll{grid-template-rows:auto auto auto}
+  .hero{padding-top:min(30vh,240px)}
+  .top{flex-wrap:nowrap;gap:12px}
+  .brand{font-size:18px;gap:10px;min-width:0}
+  .top nav{display:none}
+  .top .btn{margin-left:auto;padding:0 16px}
+  .panel{border-radius:26px}
+  .facts,.levels{grid-template-columns:minmax(0,1fr)}
+  .row,.speeds,.moves{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards{grid-auto-flow:row;grid-auto-columns:auto}
+  .card + .card{border-left:0;border-top:1px solid var(--edge);border-radius:0 0 20px 20px}
+  /* setup: tighter, and Start stays in view while the settings scroll */
+  dialog{padding:18px;border-radius:24px;width:calc(100% - 20px);max-height:calc(100% - 20px)}
+  .opt .box{padding:11px 13px}
+  #setup .actions{
+    position:sticky;bottom:0;margin:0 -18px -18px;padding:12px 18px 18px;
+    background:rgba(12,15,42,.97);border-top:1px solid var(--edge);border-radius:0 0 24px 24px;
+  }
+  #setup .actions .btn{flex:1}
+  /* play: the controls become one compact bar across the bottom */
+  .hud{left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));max-width:none;justify-content:center;border-radius:22px;gap:6px}
+  .hud .lab:not(#mute){display:none}
+  .hud .btn{padding:0 12px;font-size:14px}
+  .hud .round{width:40px;height:40px}
+  .hud output{min-width:34px}
+  #full{display:none}
+}
+/* phone held upright: digit above, hand below, both as large as the screen allows */
+@media (max-width:860px) and (orientation:portrait){
+  .arena{flex-direction:column;gap:10px}
+  .digit-card{width:min(38vh,72vw);height:min(38vh,72vw)}
+  .digit{font-size:min(28vh,54vw)}
+  .hint{height:min(34vh,70vw)}
+  .arena.nohint .digit-card{width:min(46vh,86vw);height:min(46vh,86vw)}
+  .arena.nohint .digit{font-size:min(34vh,64vw)}
+}
+/* phone held sideways: little height, so everything around the task shrinks */
+@media (max-height:480px) and (orientation:landscape){
+  .strip{top:8px}
+  .strip b{width:36px;height:36px;border-radius:12px;font-size:19px}
+  .arena{padding:52px 16px 34px;gap:clamp(16px,6vw,72px)}
+  .digit-card{width:min(66vh,36vw);height:min(66vh,36vw)}
+  .digit{font-size:min(48vh,26vw)}
+  .hint{height:min(70vh,44vw)}
+  .arena.signs .hint{height:min(70vh,90vw)}
+  .stage{padding:38px 16px 30px}
+  .dots{bottom:12px;gap:10px}
+  .dots i{width:10px;height:10px}
+  .hud{bottom:8px;padding:6px}
+  .hud .btn,.hud .round{min-height:40px;height:40px}
+}
+@media (prefers-reduced-motion: reduce){
+  .digit.pop,.ring.go,.strip .in.slide,.hand.in.wave,.finish img,.actor img.bob{animation:none}
+  .hand{transition:opacity .2s}
+  .actor{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HOME ================= -->
+<section class="view" id="home">
+  <div class="home-bg" aria-hidden="true">
+    <img class="hero-art" src="img/hero.jpg" alt="">
+    <div class="hero-shade"></div>
+  </div>
+
+  <div class="home-scroll">
+    <header class="top">
+      <div class="brand"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18v-5M12 18V6M18 18v-8"/></svg></i>Ритм пальцев</div>
+      <nav>
+        <button class="link" type="button" data-how>Как это работает</button>
+        <button class="link" type="button" data-cards>Упражнения</button>
+      </nav>
+      <button class="btn primary sm" type="button" data-start>Начать
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </header>
+
+    <main class="hero">
+      <div class="panel glass">
+        <span class="chip">Разминка для рук и внимания</span>
+        <h1>Смотри.<br>Показывай.<br><em>Успевай.</em></h1>
+        <p class="lead">На доске появляется цифра или движение, а класс повторяет под музыку: показывает пальцы, гладит голову и хлопает по животу.</p>
+        <div class="cta">
+          <button class="btn primary" type="button" data-start>Начать занятие
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <button class="btn" type="button" data-how>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg>
+            Как это работает
+          </button>
+        </div>
+        <ul class="facts">
+          <li><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/><path d="M4 4l16 16"/></svg></i>
+            <div><b>Без камеры</b><span>Дети смотрят на доску</span></div></li>
+          <li><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19v-5M12 19V9M19 19V5"/></svg></i>
+            <div><b>Три уровня</b><span>От спокойного до быстрого</span></div></li>
+          <li><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i>
+            <div><b>1–3 минуты</b><span>Между заданиями на уроке</span></div></li>
+        </ul>
+      </div>
+    </main>
+
+    <section class="cards glass" id="cards" aria-label="Упражнения">
+      <button class="card" type="button" data-start="digits">
+        <span class="tile"><img src="img/hand-2.webp" alt=""></span>
+        <span class="txt"><b>Цифры и пальцы</b><span>Покажи столько пальцев, сколько на экране</span></span>
+      </button>
+      <button class="card" type="button" data-start="gestures" id="cardSigns" hidden>
+        <span class="tile"><img id="cardSignsImg" alt=""></span>
+        <span class="txt"><b>Жесты</b><span>Повтори жест, который показывает рука</span></span>
+      </button>
+      <button class="card" type="button" data-start="actions">
+        <span class="tile"><img src="img/pose-head-belly.webp" alt=""></span>
+        <span class="txt"><b>Разные действия</b><span>Руки делают разное: голова и живот, нос и ухо</span></span>
+      </button>
+      <button class="card" type="button" data-start="mix">
+        <span class="tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3c5 0 5 10 10 10h3M4 17h3c2 0 3-1.5 4-3M13 10c1-1.5 2-3 4-3h3"/><path d="M17 4l3 3-3 3M17 14l3 3-3 3"/></svg></span>
+        <span class="txt"><b>Смешанная разминка</b><span>Упражнения идут по очереди</span></span>
+      </button>
+    </section>
+  </div>
+</section>
+
+<!-- ================= DIALOGS ================= -->
+<dialog id="how" aria-labelledby="howT">
+  <h2 id="howT">Как это работает</h2>
+  <p class="sub">Разминка идёт на доске, учитель только запускает её.</p>
+  <ul class="steps">
+    <li><b>Цифры и пальцы.</b> На экране цифра от 1 до 5, дети показывают столько же пальцев.</li>
+    <li id="howSigns" hidden><b>Жесты.</b> Рука на экране показывает жест, дети повторяют его.</li>
+    <li><b>Разные действия.</b> Дети повторяют за персонажем, как в зеркале, а руки делают разное. Движений четыре: кулак и ладонь, голова и живот, нос и ухо, круг и взмахи. Круговая стрелка значит «веди по кругу», расходящиеся кольца значат «хлопай», ровное кольцо значит «держи руку здесь», стрелка вверх-вниз значит «маши». Когда персонаж поворачивается, руки меняются.</li>
+    <li><b>Смешанная разминка.</b> Упражнения идут по очереди.</li>
+    <li><b>Уровень и скорость.</b> Уровень задаёт, что показывать, а скорость задаёт, как часто это меняется. Любой уровень можно запустить на любой из четырёх скоростей.</li>
+  </ul>
+  <p class="sub">Камера и вход для детей не нужны. Учитель смотрит на класс и выбирает уровень.</p>
+  <p class="sub">Музыка: «Voltaic» и «Disco con Tutti», Kevin MacLeod (incompetech.com). Лицензия <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons: By Attribution 4.0</a>.</p>
+  <div class="actions"><button class="btn primary" type="button" data-close>Понятно</button></div>
+</dialog>
+
+<dialog id="setup" aria-labelledby="setupT">
+  <form id="setupForm">
+    <h2 id="setupT">Цифры и пальцы</h2>
+    <p class="sub" id="setupSub">На экране цифра, дети показывают столько же пальцев.</p>
+
+    <fieldset class="field">
+      <legend>Уровень</legend>
+      <div class="levels">
+        <label class="opt"><input type="radio" name="level" id="lvEasy" value="easy"><span class="box"><b>Лёгкий</b><small id="lvEasyT">Цифры 1–3, спокойная смена, рука подсказывает</small></span></label>
+        <label class="opt"><input type="radio" name="level" id="lvMedium" value="medium" checked><span class="box"><b>Средний</b><small id="lvMediumT">Цифры 1–5, смена быстрее, рука подсказывает</small></span></label>
+        <label class="opt"><input type="radio" name="level" id="lvHard" value="hard"><span class="box"><b>Сложный</b><small id="lvHardT">Цифры 1–5 с повторами, без подсказки</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="field">
+      <legend>Скорость</legend>
+      <div class="speeds">
+        <label class="opt"><input type="radio" name="speed" id="spSlow" value="slow"><span class="box">Медленно</span></label>
+        <label class="opt"><input type="radio" name="speed" id="spMedium" value="medium" checked><span class="box">Средне</span></label>
+        <label class="opt"><input type="radio" name="speed" id="spHard" value="hard"><span class="box">Тяжело</span></label>
+        <label class="opt"><input type="radio" name="speed" id="spSuper" value="super"><span class="box">Супер тяжело</span></label>
+      </div>
+      <p class="note" id="speedT"></p>
+    </fieldset>
+
+    <fieldset class="field" id="moveField" hidden>
+      <legend>Движение</legend>
+      <div class="moves" id="moveOpts"></div>
+    </fieldset>
+
+    <fieldset class="field">
+      <legend>Музыка</legend>
+      <div class="moves" id="soundOpts"></div>
+    </fieldset>
+
+    <div class="row">
+      <fieldset class="field" id="hintField">
+        <legend>Подсказка рукой</legend>
+        <div class="seg">
+          <label class="opt"><input type="radio" name="hint" id="htOn" value="1" checked><span class="box">Да</span></label>
+          <label class="opt"><input type="radio" name="hint" id="htOff" value="0"><span class="box">Нет</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Минуты</legend>
+        <div class="seg">
+          <label class="opt"><input type="radio" name="minutes" id="mn1" value="1"><span class="box">1</span></label>
+          <label class="opt"><input type="radio" name="minutes" id="mn2" value="2" checked><span class="box">2</span></label>
+          <label class="opt"><input type="radio" name="minutes" id="mn3" value="3"><span class="box">3</span></label>
+        </div>
+      </fieldset>
+    </div>
+
+    <details>
+      <summary>Для проектора: сдвиг экрана</summary>
+      <p>Если цифра появляется позже звука, сдвиньте экран раньше. Подбирается один раз для класса.</p>
+      <div class="shift">
+        <button class="round" type="button" id="offDown" aria-label="Раньше">−</button>
+        <output id="offVal">0 мс</output>
+        <button class="round" type="button" id="offUp" aria-label="Позже">+</button>
+      </div>
+    </details>
+
+    <div class="actions">
+      <button class="btn" type="button" data-close>Отмена</button>
+      <button class="btn primary" type="submit" id="go">Старт</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ================= PLAY ================= -->
+<section class="view play" id="play" hidden>
+  <div class="orb a" aria-hidden="true"></div>
+  <div class="orb b" aria-hidden="true"></div>
+
+  <div class="strip" id="stripWrap" aria-hidden="true"><div class="in" id="strip"></div></div>
+
+  <div class="arena" id="arena">
+    <div class="digit-card"><span class="ring" id="ring"></span><span class="digit" id="digit" aria-live="off"></span></div>
+    <div class="hint" id="hintBox" aria-hidden="true">
+      <img class="hand" id="handA" alt="">
+      <img class="hand" id="handB" alt="">
+    </div>
+  </div>
+
+  <div class="stage idle" id="stage" aria-hidden="true" hidden>
+    <div class="actor" id="actor">
+      <img id="body" src="img/pose-head-belly.webp" alt="">
+      <div id="cues"></div>
+    </div>
+  </div>
+
+  <div class="dots" id="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+  <div class="hud glass" id="hud">
+    <span class="lab" id="mute" hidden>Звук не идёт</span>
+    <button class="btn" type="button" id="pause">Пауза</button>
+    <span class="lab">Темп</span>
+    <button class="round" type="button" id="bpmDown" aria-label="Медленнее">−</button>
+    <output id="bpmVal">100</output>
+    <button class="round" type="button" id="bpmUp" aria-label="Быстрее">+</button>
+    <button class="btn" type="button" id="full">На весь экран</button>
+    <button class="btn" type="button" id="exit">Выйти</button>
+  </div>
+
+  <div class="finish" id="finish" hidden>
+    <div class="box glass">
+      <img src="img/hand-5.webp" alt="">
+      <h2>Молодцы!</h2>
+      <p>Разминка окончена.</p>
+      <div class="actions">
+        <button class="btn" type="button" id="toHome">На главную</button>
+        <button class="btn primary" type="button" id="again">Ещё раз</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // Level = what is shown. Speed = how fast it changes. Any level runs at any speed.
+  // max: largest digit · repeat: the same thing may come twice · hint: the hand shows the answer
+  // signs: how many gestures are in play · turns: how the character changes hands
+  const LEVELS = {
+    easy:   { max: 3, repeat: false, hint: true,  signs: 3, turns: 'rare',   moves: 2 },
+    medium: { max: 5, repeat: false, hint: true,  signs: 5, turns: 'steady', moves: 3 },
+    hard:   { max: 5, repeat: true,  hint: false, signs: 6, turns: 'random', moves: 4 }
+  };
+  // Movements for "Разные действия", easiest first. A level uses the first few of them.
+  // cues: [kind, x%, y%, width%, colour] placed on the pose picture.
+  // swirl = stroke in a circle · pat = tap in time · pulse = hold the hand here · wave = move it up and down
+  const MOVES = [
+    // one hand is a fist, the other an open palm; on the turn they swap
+    { id: 'fist-palm', name: 'Кулак и ладонь', src: 'img/pose-fist-palm.webp', ratio: '575/1100',
+      cues: [['pat', 14.8, 41, 34], ['pulse', 83.5, 36, 30]] },
+    // one hand strokes the head in a circle, the other pats the belly
+    { id: 'head-belly', name: 'Голова и живот', src: 'img/pose-head-belly.webp', ratio: '589/1100',
+      cues: [['swirl', 65, 5, 36], ['pat', 42, 58.6, 34]] },
+    // one hand holds the nose, the other the ear; on the turn they swap
+    { id: 'nose-ear', name: 'Нос и ухо', src: 'img/pose-nose-ear.webp', ratio: '600/1100',
+      cues: [['pulse', 41, 23, 24], ['pulse', 72.5, 24, 24, '#F9A8FF']] },
+    // arms out: one hand draws circles, the other goes up and down
+    { id: 'arms-wide', name: 'Круг и взмахи', src: 'img/pose-arms-wide.webp', ratio: '890/1100',
+      cues: [['swirl', 8.4, 56, 22], ['wave', 92.7, 56, 20]] }
+  ];
+  const MOVE_SEG = 32; // beats one movement lasts before the next one comes
+  // bpm: tempo of the music · hold: beats one digit or gesture stays · swap: beats between hand changes
+  const SPEEDS = {
+    slow:   { bpm: 112, hold: 4, swap: 16 },
+    medium: { bpm: 112, hold: 2, swap: 8 },
+    hard:   { bpm: 124, hold: 2, swap: 4 },
+    super:  { bpm: 112, hold: 1, swap: 2 }
+  };
+  // Hand gestures for the "gestures" exercise, easiest first. A level uses the first few of them.
+  const SIGNS = [
+    { src: 'img/sign-fist.webp' },    // кулак
+    { src: 'img/hand-5.webp' },       // ладонь
+    { src: 'img/sign-thumb.webp' },   // класс
+    { src: 'img/sign-ok.webp' },      // колечко
+    { src: 'img/sign-horns.webp' },   // коза
+    { src: 'img/sign-shaka.webp' }    // телефон
+  ];
+  // The music, all by Kevin MacLeod (incompetech.com), CC BY 4.0. Measured on each file:
+  // a steady tempo `bpm`, and `first`, the moment of beat 1 in seconds; bars start on that beat.
+  // The speeds above set the tempo, so each track is played a little slower or faster than recorded.
+  const TRACKS = [
+    { id: 'voltaic', name: 'Voltaic', src: 'audio/voltaic.mp3', bpm: 120, first: 0.02 },        // 80s dance
+    { id: 'disco', name: 'Disco con Tutti', src: 'audio/disco.mp3', bpm: 115, first: 0.015 }     // disco with horns
+  ];
+  let TRACK = TRACKS[0];
+  const SEG = 16; // mix: beats in one block before the exercise changes
+  const MODES = {
+    digits: {
+      title: 'Цифры и пальцы', hint: true,
+      sub: 'На экране цифра, дети показывают столько же пальцев.',
+      levels: { easy: 'Цифры 1–3, рука подсказывает',
+                medium: 'Цифры 1–5, рука подсказывает',
+                hard: 'Цифры 1–5 с повторами, без подсказки' }
+    },
+    gestures: {
+      title: 'Жесты', hint: false,
+      sub: 'На экране рука показывает жест, дети повторяют его.',
+      levels: { easy: 'Три жеста: кулак, ладонь, класс',
+                medium: 'Пять жестов: добавляются колечко и коза',
+                hard: 'Шесть жестов, бывают повторы' }
+    },
+    actions: {
+      title: 'Разные действия', hint: false,
+      sub: 'Руки делают разное, дети повторяют за персонажем, как в зеркале. Когда он поворачивается, руки меняются.',
+      levels: { easy: 'Два простых движения, руки меняются вдвое реже',
+                medium: 'Три движения, ровная смена рук',
+                hard: 'Четыре движения, руки меняются неожиданно' }
+    },
+    mix: {
+      title: 'Смешанная разминка', hint: true,
+      sub: 'Упражнения идут по очереди, блоками по несколько секунд.',
+      levels: { easy: 'Цифры 1–3 с подсказкой, редкая смена рук',
+                medium: 'Цифры 1–5 с подсказкой, ровная смена рук',
+                hard: 'Повторы без подсказки, неожиданная смена рук' }
+    }
+  };
+  const COUNT_IN = 4; // one bar to get ready before the first digit
+  const COLORS = { 1: ['#5EE7FF', '#3B82F6'], 2: ['#93C5FD', '#6366F1'], 3: ['#C4B5FD', '#7C3AED'],
+                   4: ['#F0ABFC', '#A855F7'], 5: ['#FDE68A', '#F472B6'] };
+  // Bright C-major loop, four bars, one chord per bar: C, G, Am, F.
+  const ROOTS = [65.41, 98.0, 110.0, 87.31];
+  const CHORDS = [[261.63, 329.63, 392.0], [392.0, 493.88, 587.33], [440.0, 523.25, 659.25], [349.23, 440.0, 523.25]];
+  const SCALE = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5];
+  const HOOK = [[2, 2, 3, 4, 4, 3, 2, 0], [0, 0, 2, 3, 2, 1, 0, 2], [3, 3, 2, 2, 3, 4, 4, 3], [4, 3, 2, 3, 2, 1, 0, 0]];
+
+  // sound: the id of a track, or 'click' for the metronome
+  const cfg = { mode: 'digits', level: 'medium', speed: 'medium', sound: TRACKS[0].id, hint: true, minutes: 2, offset: 0 };
+  let ctx = null, noiseBuf = null, timer = null, hideT = null, pending = [], wake = null;
+  let active = false, playing = false, done = false;
+  let mode = 'digits', view = 'digits', bpm = 96, hold = 2, max = 5, repeat = false, swap = 8;
+  let signsN = 0, turns = 'steady', mixKinds = ['digits', 'actions'];
+  let dq = [], sq = [], count = 0, nextTime = 0, total = 0, flip = false;
+  let turned = false, aBeat = 0, nextTurn = 0;
+  let movePool = [0], moveSeg = MOVE_SEG, moveIdx = 0, shownMove = -1;
+  // trackState: off (metronome) · starting · on (the track is the clock) · failed (built-in loop instead)
+  let music = null, trackState = 'off', loopBase = 0;
+
+  function trackEl() {
+    if (!music) {
+      music = new Audio(TRACK.src);
+      music.preload = 'auto';
+      music.preservesPitch = true; music.mozPreservesPitch = true; music.webkitPreservesPitch = true;
+      music.addEventListener('ended', () => {      // a long session outlasts the file: start it again
+        if (!active || done || trackState !== 'on') return;
+        loopBase = count; music.currentTime = 0;
+        music.play().catch(trackFail);
+      });
+      music.addEventListener('error', () => { if (trackState === 'starting' || trackState === 'on') trackFail(); });
+    }
+    return music;
+  }
+  // Switches to another track; its file starts loading at once.
+  function useTrack(id) {
+    const t = TRACKS.find((x) => x.id === id) || TRACKS[0];
+    if (t !== TRACK) { if (music) music.pause(); music = null; TRACK = t; }
+    trackEl();
+  }
+  function startTrack() {
+    if (music && music.error) music = null;        // a player that failed earlier is replaced by a fresh one
+    const m = trackEl();
+    trackState = 'starting'; loopBase = 0;
+    nextTime = performance.now() + 2500;           // if the track has not started by then, play without it
+    try { m.pause(); m.currentTime = 0; m.playbackRate = bpm / TRACK.bpm; } catch (e) { /* not loaded yet */ }
+    const p = m.play();
+    if (p && p.then) p.then(() => {
+      if (trackState === 'starting') trackState = 'on'; else m.pause();
+    }).catch(trackFail);
+  }
+  function trackFail() {
+    if (trackState === 'failed' || trackState === 'off') return;
+    trackState = 'failed';
+    if (music) music.pause();
+    wakeSound();
+    nextTime = performance.now() + 300;
+  }
+  trackEl();                                       // start loading the file with the page
+
+  for (let i = 1; i <= 5; i++) { const im = new Image(); im.src = `img/hand-${i}.webp`; }
+
+  /* ---------- what each beat shows ---------- */
+  function kindAt(k) {
+    if (mode !== 'mix') return mode;
+    return mixKinds[Math.floor(k / SEG) % mixKinds.length];
+  }
+  // How many beats until the character changes hands again.
+  function turnGap() {
+    if (turns === 'rare') return swap * 2;
+    if (turns === 'steady') return swap;
+    const options = [Math.max(2, swap / 2), swap, Math.round(swap * 1.5)];
+    return options[Math.floor(Math.random() * options.length)];
+  }
+  // Decided when the beat is scheduled, so a late timer can never change the order.
+  function eventAt(k) {
+    if (k < 0) return null;                       // count-in
+    const kind = kindAt(k), local = mode === 'mix' ? k % SEG : k;
+    if (kind === 'digits') {
+      const digit = local % hold === 0 ? take(dq, 1, max) : null;
+      return { kind, digit, upcoming: dq.slice(0, 5) };
+    }
+    if (kind === 'gestures') {
+      const sign = local % hold === 0 ? take(sq, 0, signsN - 1) : null;
+      return { kind, sign, upcoming: sq.slice(0, 5) };
+    }
+    const fresh = aBeat % moveSeg === 0 && (aBeat === 0 || movePool.length > 1);
+    if (fresh) {                                  // a new movement starts, not turned
+      moveIdx = movePool[(aBeat / moveSeg) % movePool.length];
+      turned = false; nextTurn = aBeat;
+    }
+    if (aBeat === nextTurn) {
+      if (!fresh) turned = !turned;
+      nextTurn += turnGap();
+    }
+    aBeat++;
+    return { kind, turned, move: moveIdx };
+  }
+  const CUE_INNER = {
+    swirl: '<svg viewBox="0 0 100 100"><path d="M50 8A42 42 0 1 1 13.6 29"/><path d="M4 14L13.6 29 30 24"/></svg>',
+    pat: '<i></i><i></i>',
+    pulse: '<i></i>',
+    wave: '<svg viewBox="0 0 100 100"><path d="M50 10V90"/><path d="M30 30L50 10 70 30M30 70L50 90 70 70"/></svg>'
+  };
+  function setMove(i) {
+    const m = MOVES[i];
+    shownMove = i;
+    $('body').src = m.src;
+    $('actor').style.aspectRatio = m.ratio;
+    $('cues').innerHTML = m.cues.map(([type, x, y, w, colour]) =>
+      `<div class="cue ${type}" style="left:${x}%;top:${y}%;width:${w}%${colour ? `;--cc:${colour}` : ''}">${CUE_INNER[type]}</div>`).join('');
+    restart($('actor'), 'enter');
+  }
+  function setView(kind) {
+    const hands = kind === 'digits' || kind === 'gestures';
+    view = kind;
+    $('arena').hidden = !hands;
+    $('stripWrap').hidden = !hands;
+    $('stage').hidden = kind !== 'actions';
+    $('arena').classList.toggle('signs', kind === 'gestures');
+  }
+  function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+  /* ---------- digits and gestures ---------- */
+  // A queue of what comes next, values lo..hi, without the same value twice unless the level allows it.
+  function fill(q, lo, hi) {
+    while (q.length < 6) {
+      const last = q[q.length - 1];
+      const pool = [];
+      for (let v = lo; v <= hi; v++) if (repeat || v !== last || lo === hi) pool.push(v);
+      q.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
+  }
+  function take(q, lo, hi) { const v = q.shift(); fill(q, lo, hi); return v; }
+  const handSrc = (d) => `img/hand-${d}.webp`;
+
+  function showDigit(d) {
+    const el = $('digit');
+    el.textContent = d;
+    const [c1, c2] = COLORS[d];
+    $('arena').style.setProperty('--c1', c1);
+    $('arena').style.setProperty('--c2', c2);
+    restart(el, 'pop');
+    setHand(cfg.hint ? handSrc(d) : null, false);
+  }
+
+  // Two stacked images cross-fade, so a change never shows an empty frame.
+  function setHand(src, wave) {
+    const a = $('handA'), b = $('handB');
+    const next = flip ? a : b, prev = flip ? b : a;
+    flip = !flip;
+    prev.className = 'hand out';
+    if (src == null) { next.className = 'hand out'; return; }
+    next.src = src;
+    next.className = 'hand out';
+    void next.offsetWidth;
+    next.className = 'hand in' + (wave ? ' wave' : '');
+  }
+
+  // items: ready HTML for each chip, a digit or a small picture
+  function renderStrip(items, slide) {
+    const el = $('strip');
+    el.innerHTML = items.map((x) => `<b>${x}</b>`).join('');
+    if (slide) restart(el, 'slide');
+  }
+  const signChip = (i) => `<img src="${SIGNS[i].src}" alt="">`;
+
+  /* ---------- sound ---------- */
+  function audio() {
+    if (!ctx) { const AC = window.AudioContext || window.webkitAudioContext; ctx = new AC(); }
+    return ctx;
+  }
+  function click(t, accent) {
+    const c = audio(), o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.value = accent ? 1046 : 784;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(accent ? 0.35 : 0.2, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.17);
+  }
+  function noise(t, dur, gain, hp) {
+    const c = audio();
+    if (!noiseBuf) {
+      noiseBuf = c.createBuffer(1, c.sampleRate * 0.5, c.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = noiseBuf; f.type = 'highpass'; f.frequency.value = hp;
+    g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(c.destination);
+    s.start(t, Math.random() * 0.3); s.stop(t + dur + 0.02);
+  }
+  function tone(t, freq, dur, gain) {
+    const c = audio(), o = c.createOscillator(), g = c.createGain();
+    o.type = 'triangle'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function kick(t) {
+    const c = audio(), o = c.createOscillator(), g = c.createGain();
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+    g.gain.setValueAtTime(0.7, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.24);
+  }
+  // One call plays one beat of the loop, on the same clock that drives the digits.
+  function playBeat(t, n) {
+    if (cfg.sound === 'click') { click(t, n % 4 === 0); return; }
+    const beat = 60 / bpm, eighth = beat / 2;
+    const bar = Math.floor(n / 4) % 4, step = n % 4;
+    if (step % 2 === 0) kick(t); else noise(t, 0.12, 0.22, 1200);
+    noise(t, 0.03, 0.05, 7000); noise(t + eighth, 0.03, 0.05, 7000);
+    for (let k = 0; k < 2; k++) tone(t + k * eighth, k === 0 ? ROOTS[bar] : ROOTS[bar] * 2, eighth * 0.7, 0.16);
+    for (let k = 0; k < 4; k++) tone(t + k * eighth / 2, CHORDS[bar][k % 3] * 2, eighth * 0.4, 0.04);
+    for (let k = 0; k < 2; k++) tone(t + k * eighth, SCALE[HOOK[bar][step * 2 + k]], eighth * 0.85, 0.12);
+  }
+
+  /* ---------- clock ----------
+     The page clock drives the digits, so the exercise still runs when the browser gives no sound.
+     Each beat's sound is placed on the audio clock at the same moment, so the two stay together. */
+  function soundOn() { return !!ctx && ctx.state === 'running'; }
+
+  function schedule() {
+    const now = performance.now();
+    if (trackState === 'starting') {               // wait for the track, but not for ever
+      if (now < nextTime) return;
+      trackFail();
+    }
+    const tr = trackState === 'on' && !music.paused;
+    while (active && playing && !done) {
+      const n = count;
+      let raw;                                     // ms until beat n
+      if (tr) {
+        const p = TRACK.first + (n - loopBase) * 60 / TRACK.bpm;   // where beat n sits in the file
+        if (p > music.duration - 0.05) break;      // the file is ending; 'ended' starts it again
+        raw = (p - music.currentTime) / music.playbackRate * 1000;
+      } else raw = nextTime - now;
+      if (raw > 150) break;
+      const ahead = Math.max(0, raw);
+      const delay = Math.max(0, ahead + cfg.offset);
+      if (n >= COUNT_IN + total) {
+        done = true;
+        pending.push(setTimeout(finish, delay));
+        return;
+      }
+      if (!tr && soundOn()) playBeat(ctx.currentTime + Math.max(0.02, ahead / 1000), n);
+      const ev = eventAt(n - COUNT_IN);
+      const id = setTimeout(() => {
+        pending = pending.filter((x) => x !== id);
+        onBeat(n, ev);
+      }, delay);
+      pending.push(id);
+      nextTime = now + raw + 60000 / bpm;          // keeps the page clock ready to take over
+      count++;
+    }
+  }
+
+  function onBeat(n, ev) {
+    [...$('dots').children].forEach((el, i) => el.classList.toggle('on', i === n % 4));
+    if (ev && ev.kind !== view) setView(ev.kind);
+    if (view === 'digits') {
+      restart($('ring'), 'go');
+      if (ev && ev.digit != null) { showDigit(ev.digit); renderStrip(ev.upcoming, true); }
+    } else if (view === 'gestures') {
+      restart($('hintBox'), 'beat');
+      if (ev && ev.sign != null) { setHand(SIGNS[ev.sign].src, false); renderStrip(ev.upcoming.map(signChip), true); }
+    } else {
+      restart($('body'), 'bob');
+      if (ev) {
+        if (ev.move !== shownMove) setMove(ev.move);
+        $('stage').classList.remove('idle');
+        $('actor').classList.toggle('flip', ev.turned);
+        document.querySelectorAll('#cues .pat').forEach((el) => restart(el, 'go'));
+      }
+    }
+    if (n >= COUNT_IN) $('bar').style.width = Math.min(100, ((n - COUNT_IN + 1) / total) * 100) + '%';
+    $('mute').hidden = trackState === 'on' || soundOn();
+  }
+
+  // Starting sound needs a tap; if the browser refuses, the digits keep going silently.
+  function wakeSound() {
+    try { const c = audio(); if (c.state !== 'running') c.resume().catch(() => {}); } catch (e) { /* no audio device */ }
+  }
+
+  function setBeat() {
+    document.documentElement.style.setProperty('--beat', (60 / bpm).toFixed(3) + 's');
+    $('bpmVal').textContent = bpm;
+    if (music) music.playbackRate = bpm / TRACK.bpm;   // the track speeds up or slows down, pitch stays
+  }
+
+  /* ---------- session ---------- */
+  function start() {
+    const L = LEVELS[cfg.level], S = SPEEDS[cfg.speed];
+    mode = cfg.mode;
+    bpm = S.bpm; hold = S.hold; swap = S.swap;
+    max = L.max; repeat = L.repeat; turns = L.turns; signsN = Math.min(L.signs, SIGNS.length);
+    mixKinds = SIGNS.length ? ['digits', 'gestures', 'actions'] : ['digits', 'actions'];
+    dq = []; sq = []; fill(dq, 1, max); if (signsN) fill(sq, 0, signsN - 1);
+    count = 0; done = false; turned = false; aBeat = 0; nextTurn = 0;
+    const one = MOVES.findIndex((m) => m.id === cfg.move);   // one chosen movement, or the level's set
+    movePool = mode === 'actions' && one >= 0 ? [one] : MOVES.slice(0, L.moves).map((m, i) => i);
+    moveSeg = mode === 'mix' ? SEG : MOVE_SEG;               // in a mix every block brings the next movement
+    moveIdx = movePool[0]; setMove(moveIdx);
+    const unit = mode === 'mix' ? SEG * mixKinds.length : 4;   // a mix ends on a whole round of blocks
+    total = Math.max(unit, Math.round((cfg.minutes * bpm) / unit) * unit);
+
+    const first = kindAt(0);
+    $('home').hidden = true; $('play').hidden = false; $('finish').hidden = true;
+    setView(first);
+    $('stage').classList.add('idle'); $('actor').classList.remove('flip');
+    $('arena').classList.toggle('nohint', !cfg.hint);
+    $('digit').textContent = ''; $('digit').classList.remove('pop');
+    $('bar').style.width = '0%';
+    [...$('dots').children].forEach((el) => el.classList.remove('on'));
+    renderStrip(first === 'gestures' ? sq.slice(0, 5).map(signChip) : dq.slice(0, 5), false);
+    setHand(first === 'gestures' || cfg.hint ? handSrc(5) : null, true);   // the hand waves hello during the count-in
+    setBeat();
+
+    active = true; playing = true;
+    if (cfg.sound !== 'click') { useTrack(cfg.sound); startTrack(); }
+    else { trackState = 'off'; if (music) music.pause(); wakeSound(); nextTime = performance.now() + 400; }
+    clearInterval(timer); timer = setInterval(schedule, 25); schedule();
+    hudUi(); keepAwake(true);
+  }
+
+  function clearPending() { pending.forEach(clearTimeout); pending = []; }
+
+  function pause() {
+    if (!active || done) return;
+    playing = false; clearInterval(timer); timer = null;   // beats already on their way still land
+    if (music) music.pause();
+    if (ctx && ctx.state === 'running') ctx.suspend();
+    hudUi();
+  }
+  function resume() {
+    if (!active || done) return;
+    if (trackState === 'on') music.play().catch(trackFail); else wakeSound();
+    playing = true; nextTime = performance.now() + 250;
+    timer = setInterval(schedule, 25); schedule(); hudUi();
+  }
+  function stop() {
+    active = false; playing = false; clearInterval(timer); timer = null; clearPending();
+    if (music) music.pause();
+    if (ctx && ctx.state === 'running') ctx.suspend();
+    keepAwake(false);
+  }
+  function finish() {
+    stop(); done = true;
+    $('finish').hidden = false;
+    $('hud').classList.add('faded');
+    $('again').focus();
+  }
+  function exit() {
+    stop();
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    $('play').hidden = true; $('home').hidden = false;
+  }
+
+  function hudUi() {
+    $('pause').textContent = playing ? 'Пауза' : 'Продолжить';
+    $('play').classList.toggle('paused', !playing);
+    showHud();
+  }
+  function showHud() {
+    const hud = $('hud');
+    if (!$('finish').hidden) return;
+    hud.classList.remove('faded');
+    clearTimeout(hideT);
+    if (playing) hideT = setTimeout(() => hud.classList.add('faded'), 3000);
+  }
+  async function keepAwake(on) {
+    try {
+      if (on && navigator.wakeLock) wake = await navigator.wakeLock.request('screen');
+      if (!on && wake) { await wake.release(); wake = null; }
+    } catch (e) { /* optional */ }
+  }
+
+  /* ---------- wiring ---------- */
+  function openSetup(m) {
+    const M = MODES[m];
+    cfg.mode = m;
+    $('setupT').textContent = M.title;
+    $('setupSub').textContent = M.sub;
+    $('lvEasyT').textContent = M.levels.easy;
+    $('lvMediumT').textContent = M.levels.medium;
+    $('lvHardT').textContent = M.levels.hard;
+    $('hintField').hidden = !M.hint;
+    $('moveField').hidden = !(m === 'actions' && MOVES.length > 1);
+    speedNote();
+    $('setup').showModal();
+  }
+  // Says in seconds what the chosen speed means for this exercise and level.
+  function secs(beats, b) { return (beats * 60 / b).toFixed(1).replace('.', ',').replace(',0', ''); }
+  function speedNote() {
+    const f = new FormData($('setupForm'));
+    const S = SPEEDS[f.get('speed')], L = LEVELS[f.get('level')];
+    const show = secs(S.hold, S.bpm);
+    const gap = L.turns === 'rare' ? S.swap * 2 : S.swap;
+    const turn = (L.turns === 'random' ? 'в среднем раз в ' : 'раз в ') + secs(gap, S.bpm) + ' с';
+    $('speedT').textContent = {
+      digits: `Новая цифра раз в ${show} с.`,
+      gestures: `Новый жест раз в ${show} с.`,
+      actions: `Руки меняются ${turn}.`,
+      mix: `Новая цифра или жест раз в ${show} с, руки меняются ${turn}.`
+    }[cfg.mode];
+  }
+  document.querySelectorAll('input[name="speed"], input[name="level"]').forEach((r) =>
+    r.addEventListener('change', speedNote));
+
+  // Music: one of the tracks, or the plain metronome. Picking a track starts loading it.
+  $('soundOpts').innerHTML =
+    TRACKS.map((t, i) => `<label class="opt"><input type="radio" name="sound" id="sd-${t.id}" value="${t.id}"${i === 0 ? ' checked' : ''}><span class="box">${t.name}</span></label>`).join('') +
+    '<label class="opt"><input type="radio" name="sound" id="sd-click" value="click"><span class="box">Метроном</span></label>';
+  document.querySelectorAll('input[name="sound"]').forEach((r) => r.addEventListener('change', () => {
+    if (r.value !== 'click' && !active) useTrack(r.value);
+  }));
+
+  // The teacher can run all movements of the level in turn, or drill one of them.
+  $('moveOpts').innerHTML =
+    '<label class="opt"><input type="radio" name="move" id="mvAll" value="all" checked><span class="box">Все по очереди</span></label>' +
+    MOVES.map((m) => `<label class="opt"><input type="radio" name="move" id="mv-${m.id}" value="${m.id}"><span class="box">${m.name}</span></label>`).join('');
+  MOVES.forEach((m) => { const im = new Image(); im.src = m.src; });
+
+  if (SIGNS.length) {                              // the gestures exercise appears with its pictures
+    $('cardSigns').hidden = false; $('cardSignsImg').src = SIGNS[0].src; $('howSigns').hidden = false;
+    SIGNS.forEach((s) => { const im = new Image(); im.src = s.src; });
+  }
+  document.querySelectorAll('[data-start]').forEach((b) =>
+    b.addEventListener('click', () => openSetup(b.dataset.start || 'digits')));
+  document.querySelectorAll('[data-how]').forEach((b) => b.addEventListener('click', () => $('how').showModal()));
+  document.querySelectorAll('[data-cards]').forEach((b) => b.addEventListener('click', () =>
+    $('cards').scrollIntoView({ behavior: 'smooth', block: 'end' })));
+  document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+
+  // A level sets its own default for the hand hint; the teacher can still change it.
+  document.querySelectorAll('input[name="level"]').forEach((r) => r.addEventListener('change', () => {
+    (LEVELS[r.value].hint ? $('htOn') : $('htOff')).checked = true;
+  }));
+  const showOffset = () => { $('offVal').textContent = `${cfg.offset} мс`; };
+  $('offUp').addEventListener('click', () => { cfg.offset = Math.min(400, cfg.offset + 20); showOffset(); });
+  $('offDown').addEventListener('click', () => { cfg.offset = Math.max(-400, cfg.offset - 20); showOffset(); });
+
+  $('setupForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    cfg.level = f.get('level'); cfg.speed = f.get('speed'); cfg.sound = f.get('sound');
+    cfg.move = f.get('move') || 'all';
+    cfg.hint = f.get('hint') === '1'; cfg.minutes = Number(f.get('minutes'));
+    $('setup').close();
+    start();
+  });
+
+  $('pause').addEventListener('click', () => (playing ? pause() : resume()));
+  $('exit').addEventListener('click', exit);
+  $('toHome').addEventListener('click', exit);
+  $('again').addEventListener('click', start);
+  $('bpmUp').addEventListener('click', () => { bpm = Math.min(136, bpm + 4); setBeat(); });
+  $('bpmDown').addEventListener('click', () => { bpm = Math.max(96, bpm - 4); setBeat(); });
+  $('full').addEventListener('click', () => {
+    const el = document.documentElement;
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if ($('play').hidden) return;
+    showHud();
+    if (e.code === 'Space' && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); playing ? pause() : resume(); }
+    if (e.key === 'Escape' && !document.fullscreenElement) exit();
+  });
+  $('play').addEventListener('pointermove', showHud);
+  $('play').addEventListener('pointerdown', showHud);
+})();
+</script>
+</body>
+</html>
